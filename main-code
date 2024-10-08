@@ -135,6 +135,7 @@
                            ADD 1 TO myCounter
                        ELSE IF userString(myCounter:1) EQUAL ")"
                            PERFORM UNTIL aSign(stackIndex) EQUAL "("
+                           OR stackIndex EQUAL 0
                                STRING oldString DELIMITED BY SPACE
                                aSign(stackIndex) DELIMITED BY SPACE
                                INTO newString
@@ -148,10 +149,14 @@
                                SUBTRACT 1 FROM stackIndex
 
                            END-PERFORM
+                           IF stackIndex GREATER THAN 0 THEN
 
-                           MOVE SPACES TO aSign(stackIndex)
-                           SUBTRACT 1 FROM stackIndex
-                           ADD 1 TO myCounter
+                               MOVE SPACES TO aSign(stackIndex)
+                               SUBTRACT 1 FROM stackIndex
+                               ADD 1 TO myCounter
+                           ELSE
+                               ADD 1 TO myCounter
+                           END-IF
                        END-IF
 
                    END-IF
@@ -174,7 +179,7 @@
            END-PERFORM
 
 
-           
+
            MOVE ZERO TO stringLength
 
            PERFORM VARYING myCounter FROM 1 BY 1 UNTIL myCounter
@@ -186,41 +191,41 @@
 
            END-PERFORM
 
-           
+
            MOVE SPACES TO stack
-           
+
            MOVE 1 TO myCounter
            MOVE 0 TO stackIndex
            MOVE 0 TO stackEvalIndex
-           
+
            PERFORM UNTIL myCounter EQUALS stringLength + 1
                IF oldString(myCounter:1) IS NUMERIC THEN
                    ADD 1 TO stackEvalIndex
                    MOVE oldString(myCounter:1) TO num(stackEvalIndex)
                    DISPLAY "APPEND" oldString(myCounter:1)
                    ADD 1 TO myCounter
-                   
+
                ELSE
                    IF stackEvalIndex >= 2 AND stackIndex >= 0 THEN
                        ADD 1 TO stackIndex
                        MOVE oldString(myCounter:1) TO aSign(stackIndex)
                        PERFORM UNTIL stackEvalIndex < 2 OR
                        stackIndex = 0
-                       
+
                        MOVE num(stackEvalIndex) TO num1
                        MOVE ZEROES TO num(stackEvalIndex)
                        SUBTRACT 1 FROM stackEvalIndex
                        MOVE num(stackEvalIndex) TO num2
-                       
+
                        IF aSign(stackIndex) EQUALS "*" THEN
                            DISPLAY "MULTIPLY" num1 " BY " num2
                            COMPUTE num1 = num1 * num2
                            MOVE SPACE TO aSign(stackIndex)
                            SUBTRACT 1 FROM stackIndex
                            MOVE num1 TO num(stackEvalIndex)
-                           DISPLAY "GIVING" 
+                           DISPLAY "GIVING"
                            DISPLAY num(stackEvalIndex)
-                       ELSE IF aSign(stackIndex) EQUALS "/" 
+                       ELSE IF aSign(stackIndex) EQUALS "/"
                            DISPLAY "DIVIDE" num2 " BY " num1
                            COMPUTE num1 = num2 / num1
                            MOVE SPACE TO aSign(stackIndex)
@@ -228,7 +233,7 @@
                            MOVE num1 TO num(stackEvalIndex)
                            DISPLAY "GIVING"
                            DISPLAY num(stackEvalIndex)
-                       ELSE IF aSign(stackIndex) EQUALS "+" 
+                       ELSE IF aSign(stackIndex) EQUALS "+"
                            DISPLAY "ADDING " num1 " TO " num2
                            COMPUTE num1 = num1 + num2
                            MOVE SPACE TO aSign(stackIndex)
@@ -236,7 +241,7 @@
                            MOVE num1 TO num(stackEvalIndex)
                            DISPLAY "GIVING"
                            DISPLAY num(stackEvalIndex)
-                       ELSE IF aSign(stackIndex) EQUALS "-" 
+                       ELSE IF aSign(stackIndex) EQUALS "-"
                            DISPLAY "SUBTRACT" num1 " FROM " num2
                            COMPUTE num1 = num2 - num1
                            MOVE SPACE TO aSign(stackIndex)
@@ -245,28 +250,28 @@
                            DISPLAY "GIVING"
                            DISPLAY num(stackEvalIndex)
                        END-IF
-                       
-                       
-                           
-                       
+
+
+
+
                        END-PERFORM
-                       
+
                        ADD 1 TO myCounter
                    ELSE
                        DISPLAY "ADD " oldString(myCounter:1) " TO STACK"
                        ADD 1 TO stackIndex
                        MOVE oldString(myCounter:1) TO aSign(stackIndex)
                        ADD 1 TO myCounter
-                   
+
                    END-IF
-               
+
                END-IF
-           
+
            END-PERFORM
-           
+
            DISPLAY "RESULT:"
            DISPLAY num(stackEvalIndex)
-           
+
 
            STOP RUN.
       ** add other procedures here
