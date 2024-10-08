@@ -1,0 +1,273 @@
+      ******************************************************************
+      * Author:
+      * Date:
+      * Purpose:
+      * Tectonics: cobc
+      ******************************************************************
+       IDENTIFICATION DIVISION.
+      *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+       PROGRAM-ID. YOUR-PROGRAM-NAME.
+       ENVIRONMENT DIVISION.
+      *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+       CONFIGURATION SECTION.
+      *-----------------------
+       INPUT-OUTPUT SECTION.
+      *-----------------------
+       DATA DIVISION.
+      *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+       FILE SECTION.
+      *-----------------------
+       WORKING-STORAGE SECTION.
+       01 userString PIC X(40).
+       01 stringLength PIC 99 VALUE 0.
+       01 myCounter PIC 99.
+       01 stackIndex PIC 999 VALUE 0.
+       01 stackEvalIndex PIC 999 VALUE 0.
+
+       01 newString PIC X(100) VALUE SPACES.
+       01 oldString PIC X(100) VALUE SPACES.
+
+       01 stack.
+           02 aSign PIC A OCCURS 100 TIMES VALUE SPACES.
+       01 stackEval.
+           02 num PIC S999V99 OCCURS 100 TIMES VALUE ZEROES.
+       01 num1 PIC S999V99 VALUE 0.
+       01 num2 PIC S999V99 VALUE 0.
+
+
+      *-----------------------
+       PROCEDURE DIVISION.
+      *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+       MAIN-PROCEDURE.
+      **
+      * The main procedure of the program
+      **
+           DISPLAY "INPUT EQUATION TO BE EVALUATED!"
+           ACCEPT userString
+
+
+           PERFORM VARYING myCounter FROM 1 BY 1 UNTIL myCounter
+           EQUALS 40
+
+               IF userString(myCounter:1) NOT EQUALS " " THEN
+                   ADD 1 TO stringLength
+               END-IF
+
+           END-PERFORM
+
+
+           MOVE 1 TO myCounter
+
+           PERFORM UNTIL myCounter EQUALS stringLength
+               IF userString(myCounter:1) EQUAL " "
+                   ADD 1 TO stringLength
+                   ADD 1 TO myCounter
+               ELSE
+
+                   IF userString(myCounter:1) IS NUMERIC THEN
+
+                       STRING oldString DELIMITED BY SPACE
+                       userString(myCounter:1) DELIMITED BY SPACE
+                       INTO newString
+                       END-STRING
+
+
+                       ADD 1 TO myCounter
+
+                       MOVE newString TO oldString
+                   ELSE
+                       IF userString(myCounter:1) EQUAL "+"
+                           OR userString(myCounter:1) EQUAL "-" THEN
+                           PERFORM UNTIL aSign(stackIndex)
+                           NOT EQUAL "+" AND aSign(stackIndex) NOT
+                           EQUAL "-" AND aSign(stackIndex) NOT EQUAL "*"
+                           AND asign(stackIndex) NOT EQUAL "/"
+
+                               STRING oldString DELIMITED BY SPACE
+                               aSign(stackIndex) DELIMITED BY SPACE
+                               INTO newString
+                               END-STRING
+
+
+                               MOVE newString TO oldString
+
+                               MOVE SPACES TO aSign(stackIndex)
+                               SUBTRACT 1 FROM stackIndex
+
+                           END-PERFORM
+
+                           ADD 1 TO stackIndex
+                           MOVE userString(myCounter:1) TO
+                           aSign(stackIndex)
+                           ADD 1 TO myCounter
+
+
+
+                       ELSE IF userString(myCounter:1) EQUAL "*" OR
+                           userString(myCounter:1) EQUAL "/"
+
+                           PERFORM UNTIL aSign(stackIndex) NOT EQUAL "*"
+                               AND aSign(stackIndex) NOT EQUAL "/"
+
+                               STRING oldString DELIMITED BY SPACE
+                               aSign(stackIndex) DELIMITED BY SPACE
+                               INTO newString
+                               END-STRING
+
+
+
+                               MOVE newString TO oldString
+
+                               MOVE SPACES TO aSign(stackIndex)
+                               SUBTRACT 1 FROM stackIndex
+
+
+                           END-PERFORM
+
+                           ADD 1 TO stackIndex
+                           MOVE userString(myCounter:1) TO
+                           aSign(stackIndex)
+                           ADD 1 TO myCounter
+                       ELSE IF userString(myCounter:1) EQUAL "("
+                           ADD 1 TO stackIndex
+                           MOVE userString(myCounter:1) TO
+                           aSign(stackIndex)
+                           ADD 1 TO myCounter
+                       ELSE IF userString(myCounter:1) EQUAL ")"
+                           PERFORM UNTIL aSign(stackIndex) EQUAL "("
+                               STRING oldString DELIMITED BY SPACE
+                               aSign(stackIndex) DELIMITED BY SPACE
+                               INTO newString
+                               END-STRING
+
+
+
+                               MOVE newString TO oldString
+
+                               MOVE SPACES TO aSign(stackIndex)
+                               SUBTRACT 1 FROM stackIndex
+
+                           END-PERFORM
+
+                           MOVE SPACES TO aSign(stackIndex)
+                           SUBTRACT 1 FROM stackIndex
+                           ADD 1 TO myCounter
+                       END-IF
+
+                   END-IF
+
+               END-IF
+
+           END-PERFORM
+
+           PERFORM UNTIL stackIndex EQUAL 0
+               STRING oldString DELIMITED BY SPACE
+               aSign(stackIndex) DELIMITED BY SPACE
+               INTO newString
+               END-STRING
+
+               MOVE newString TO oldString
+
+               MOVE SPACES TO aSign(stackIndex)
+               SUBTRACT 1 FROM stackIndex
+
+           END-PERFORM
+
+
+           
+           MOVE ZERO TO stringLength
+
+           PERFORM VARYING myCounter FROM 1 BY 1 UNTIL myCounter
+           EQUALS 90
+
+               IF oldString(myCounter:1) NOT EQUALS " " THEN
+                   ADD 1 TO stringLength
+               END-IF
+
+           END-PERFORM
+
+           
+           MOVE SPACES TO stack
+           
+           MOVE 1 TO myCounter
+           MOVE 0 TO stackIndex
+           MOVE 0 TO stackEvalIndex
+           
+           PERFORM UNTIL myCounter EQUALS stringLength + 1
+               IF oldString(myCounter:1) IS NUMERIC THEN
+                   ADD 1 TO stackEvalIndex
+                   MOVE oldString(myCounter:1) TO num(stackEvalIndex)
+                   DISPLAY "APPEND" oldString(myCounter:1)
+                   ADD 1 TO myCounter
+                   
+               ELSE
+                   IF stackEvalIndex >= 2 AND stackIndex >= 0 THEN
+                       ADD 1 TO stackIndex
+                       MOVE oldString(myCounter:1) TO aSign(stackIndex)
+                       PERFORM UNTIL stackEvalIndex < 2 OR
+                       stackIndex = 0
+                       
+                       MOVE num(stackEvalIndex) TO num1
+                       MOVE ZEROES TO num(stackEvalIndex)
+                       SUBTRACT 1 FROM stackEvalIndex
+                       MOVE num(stackEvalIndex) TO num2
+                       
+                       IF aSign(stackIndex) EQUALS "*" THEN
+                           DISPLAY "MULTIPLY" num1 " BY " num2
+                           COMPUTE num1 = num1 * num2
+                           MOVE SPACE TO aSign(stackIndex)
+                           SUBTRACT 1 FROM stackIndex
+                           MOVE num1 TO num(stackEvalIndex)
+                           DISPLAY "GIVING" 
+                           DISPLAY num(stackEvalIndex)
+                       ELSE IF aSign(stackIndex) EQUALS "/" 
+                           DISPLAY "DIVIDE" num2 " BY " num1
+                           COMPUTE num1 = num2 / num1
+                           MOVE SPACE TO aSign(stackIndex)
+                           SUBTRACT 1 FROM stackIndex
+                           MOVE num1 TO num(stackEvalIndex)
+                           DISPLAY "GIVING"
+                           DISPLAY num(stackEvalIndex)
+                       ELSE IF aSign(stackIndex) EQUALS "+" 
+                           DISPLAY "ADDING " num1 " TO " num2
+                           COMPUTE num1 = num1 + num2
+                           MOVE SPACE TO aSign(stackIndex)
+                           SUBTRACT 1 FROM stackIndex
+                           MOVE num1 TO num(stackEvalIndex)
+                           DISPLAY "GIVING"
+                           DISPLAY num(stackEvalIndex)
+                       ELSE IF aSign(stackIndex) EQUALS "-" 
+                           DISPLAY "SUBTRACT" num1 " FROM " num2
+                           COMPUTE num1 = num2 - num1
+                           MOVE SPACE TO aSign(stackIndex)
+                           SUBTRACT 1 FROM stackIndex
+                           MOVE num1 TO num(stackEvalIndex)
+                           DISPLAY "GIVING"
+                           DISPLAY num(stackEvalIndex)
+                       END-IF
+                       
+                       
+                           
+                       
+                       END-PERFORM
+                       
+                       ADD 1 TO myCounter
+                   ELSE
+                       DISPLAY "ADD " oldString(myCounter:1) " TO STACK"
+                       ADD 1 TO stackIndex
+                       MOVE oldString(myCounter:1) TO aSign(stackIndex)
+                       ADD 1 TO myCounter
+                   
+                   END-IF
+               
+               END-IF
+           
+           END-PERFORM
+           
+           DISPLAY "RESULT:"
+           DISPLAY num(stackEvalIndex)
+           
+
+           STOP RUN.
+      ** add other procedures here
+       END PROGRAM YOUR-PROGRAM-NAME.
