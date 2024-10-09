@@ -43,7 +43,9 @@
        MAIN-PROCEDURE.
       **
       * The main procedure of the program
-      **
+      **   
+           DISPLAY "Input an Expression, EXAMPLE: (2+3)*(4)"
+           DISPLAY SPACE
            DISPLAY "INPUT EQUATION TO BE EVALUATED!"
            ACCEPT userString
 
@@ -277,4 +279,4 @@
 
            STOP RUN.
       ** add other procedures here
-       END PROGRAM YOUR-PROGRAM-NAME.
+       END PROGRAM INFIX-TO-POSTFIX-CALCULATOR.
