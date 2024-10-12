@@ -7,7 +7,7 @@
       ******************************************************************
        IDENTIFICATION DIVISION.
       *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-       PROGRAM-ID. INFIX-TO-POSTFIX-CALCULATOR. 
+       PROGRAM-ID. INFIX-TO-POSTFIX-CALCULATOR.
        AUTHOR. TRISTAN CHRISTOPHERSON.
        ENVIRONMENT DIVISION.
       *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
@@ -35,6 +35,7 @@
            02 num PIC S999V99 OCCURS 100 TIMES VALUE ZEROES.
        01 num1 PIC S999V99 VALUE 0.
        01 num2 PIC S999V99 VALUE 0.
+       01 displayNum PIC Z(6)9.99.
 
 
       *-----------------------
@@ -43,9 +44,11 @@
        MAIN-PROCEDURE.
       **
       * The main procedure of the program
-      **   
+      **
            DISPLAY "Input an Expression, EXAMPLE: (2+3)*(4)"
            DISPLAY SPACE
+
+
            DISPLAY "INPUT EQUATION TO BE EVALUATED!"
            ACCEPT userString
 
@@ -161,6 +164,9 @@
                            ELSE
                                ADD 1 TO myCounter
                            END-IF
+                       ELSE
+                           DISPLAY "INVALID INPUT"
+                           STOP RUN
                        END-IF
 
                    END-IF
